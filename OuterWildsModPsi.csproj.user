@@ -1,5 +1,0 @@
-﻿<Project>
-  <PropertyGroup>
-    <OutputPath>$(AppData)/OuterWildsModManager/OWML/Mods/SairajLoke.OuterWildsModPsi</OutputPath>
-  </PropertyGroup>
-</Project>
