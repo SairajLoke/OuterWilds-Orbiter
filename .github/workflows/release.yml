@@ -14,8 +14,8 @@ permissions:
   contents: write
 
 env:
-  PROJ_USERNAME: Sairaj
-  PROJ_NAME: OuterWildsModPsi
+  PROJ_USERNAME: SairajLoke
+  PROJ_NAME: Orbiter
 
 jobs:
   pre_job:

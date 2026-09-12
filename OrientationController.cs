@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace OrbitAssist
+namespace Orbiter
 {
     /// <summary>
     /// Pure "point the ship's nose at a target" logic. No Unity lifecycle, no

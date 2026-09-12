@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/ow-mods/owml/master/schemas/manifest_schema.json",
-  "filename": "OrbitAssist.dll",
+  "filename": "Orbiter.dll",
   "author": "SairajLoke",
-  "name": "Orbiter Mode",
-  "uniqueName": "SairajLoke.OrbitAssist",
+  "name": "Orbiter",
+  "uniqueName": "SairajLoke.Orbiter",
   "description": "Press a key to circularise and hold your ship's orbit around the targeted or nearest body, with an optional orientation lock to keep the nose pointed at it. Any manual input cancels the relevant assist.",
   "version": "0.1.0",
   "owmlVersion": "2.16.3",

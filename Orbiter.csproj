@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <AssemblyName>OrbitAssist</AssemblyName>
-    <RootNamespace>OrbitAssist</RootNamespace>
+    <AssemblyName>Orbiter</AssemblyName>
+    <RootNamespace>Orbiter</RootNamespace>
     <Copyright>Copyright © 2026 Sairaj</Copyright>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

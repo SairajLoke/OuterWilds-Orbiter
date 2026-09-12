@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace OrbitAssist
+namespace Orbiter
 {
     public enum DisengageReason
     {
@@ -21,9 +21,9 @@ namespace OrbitAssist
         SceneChange
     }
 
-    public class OrbitAssistMod : ModBehaviour
+    public class OrbiterMod : ModBehaviour
     {
-        public static OrbitAssistMod Instance { get; private set; }
+        public static OrbiterMod Instance { get; private set; }
 
         public OrbitController Controller { get; private set; }
         public bool IsOrbitActive { get; private set; }
@@ -70,7 +70,7 @@ namespace OrbitAssist
 
             // Rebindable input. Registration must happen in Start().
             _toggleCommand = ModHelper.RebindingHelper.RegisterRebindable(
-                "Orbiter Mode",
+                "Orbiter",
                 "Circularise your ship's orbit around the targeted or nearest body.",
                 Key.O,
                 GamepadBinding.DPadDown,
@@ -88,7 +88,7 @@ namespace OrbitAssist
             LoadManager.OnStartSceneLoad += OnStartSceneLoad;
             LoadManager.OnCompleteSceneLoad += OnCompleteSceneLoad;
 
-            ModHelper.Console.WriteLine("[OrbiterMode] Loaded.", MessageType.Success);
+            ModHelper.Console.WriteLine("[Orbiter] Loaded.", MessageType.Success);
         }
 
         private void OnDestroy()
@@ -132,7 +132,7 @@ namespace OrbitAssist
             _shipBody = Locator.GetShipBody();
             if (_shipBody == null)
             {
-                ModHelper.Console.WriteLine("[OrbiterMode] Ship body not found on scene load.", MessageType.Warning);
+                ModHelper.Console.WriteLine("[Orbiter] Ship body not found on scene load.", MessageType.Warning);
                 return;
             }
         }
@@ -243,20 +243,20 @@ namespace OrbitAssist
         {
             if (!CanEngage(out ReferenceFrame frame, out string reason))
             {
-                Notify($"Orbiter Mode unavailable: {reason}");
+                Notify($"Orbiter unavailable: {reason}");
                 return;
             }
 
             if (!Controller.Engage(_shipBody, frame, out string engageFailReason))
             {
-                Notify($"Orbiter Mode unavailable: {engageFailReason}");
+                Notify($"Orbiter unavailable: {engageFailReason}");
                 return;
             }
 
             IsOrbitActive = true;
-            Notify($"Orbiter Mode engaged: {Controller.TargetName}");
+            Notify($"Orbiter engaged: {Controller.TargetName}");
             ModHelper.Console.WriteLine(
-                $"[OrbiterMode] Engaged on {Controller.TargetName} " +
+                $"[Orbiter] Engaged on {Controller.TargetName} " +
                 $"at {Controller.LastDistance:F0}m.", MessageType.Info);
         }
 
@@ -272,9 +272,9 @@ namespace OrbitAssist
 
             // Manual input is the normal way to take back control, so don't nag.
             if (reason != DisengageReason.ManualInput && reason != DisengageReason.SceneChange)
-                Notify($"Orbiter Mode off ({Describe(reason)})");
+                Notify($"Orbiter off ({Describe(reason)})");
 
-            ModHelper.Console.WriteLine($"[OrbiterMode] Disengaged: {reason}", MessageType.Info);
+            ModHelper.Console.WriteLine($"[Orbiter] Disengaged: {reason}", MessageType.Info);
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -292,7 +292,7 @@ namespace OrbitAssist
             OrientationController.Engage(_shipBody, Controller.TargetBody);
             IsOrientationLockActive = true;
             Notify($"Fix-Orientation engaged: {Controller.TargetName}");
-            ModHelper.Console.WriteLine($"[OrbiterMode] Orientation lock engaged on {Controller.TargetName}.", MessageType.Info);
+            ModHelper.Console.WriteLine($"[Orbiter] Orientation lock engaged on {Controller.TargetName}.", MessageType.Info);
         }
 
         public void DisengageOrientation(DisengageReason reason)
@@ -304,7 +304,7 @@ namespace OrbitAssist
             if (reason != DisengageReason.ManualInput && reason != DisengageReason.SceneChange)
                 Notify($"Fix-Orientation off ({Describe(reason)})");
 
-            ModHelper.Console.WriteLine($"[OrbiterMode] Orientation lock disengaged: {reason}", MessageType.Info);
+            ModHelper.Console.WriteLine($"[Orbiter] Orientation lock disengaged: {reason}", MessageType.Info);
         }
 
         private static string Describe(DisengageReason reason)
@@ -388,7 +388,7 @@ namespace OrbitAssist
         {
             if (!_showDebugWindow || !_inSolarSystem || Controller == null) return;
 
-            GUI.Label(new Rect(10, 10, 600, 20), $"[OrbiterMode] active={IsOrbitActive}  target={Controller.TargetName}");
+            GUI.Label(new Rect(10, 10, 600, 20), $"[Orbiter] active={IsOrbitActive}  target={Controller.TargetName}");
             GUI.Label(new Rect(10, 30, 600, 20), $"dist={Controller.LastDistance:F0}m (hold={Controller.TargetRadius:F0}m)  orbitSpeed={Controller.LastOrbitSpeed:F1}m/s");
             GUI.Label(new Rect(10, 50, 600, 20), $"velError={Controller.LastVelError.magnitude:F2}m/s  {Controller.LastVelError}");
             GUI.Label(new Rect(10, 70, 600, 20), $"surfaceVel: radial={Controller.LastSurfaceRadialSpeed:F2}m/s (+away)  tangential={Controller.LastSurfaceTangentialSpeed:F2}m/s");

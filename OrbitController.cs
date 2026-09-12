@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace OrbitAssist
+namespace Orbiter
 {
     /// <summary>
     /// Pure orbit-hold logic. No Unity lifecycle, no Harmony, no logging.

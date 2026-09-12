@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace OrbitAssist
+namespace Orbiter
 {
     /// <summary>
     /// Faintly draws the circular orbit path being held, as a LineRenderer ring

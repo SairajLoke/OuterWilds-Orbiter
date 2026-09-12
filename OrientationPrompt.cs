@@ -1,4 +1,4 @@
-namespace OrbitAssist
+namespace Orbiter
 {
     /// <summary>
     /// Wraps a single ScreenPrompt bound to the rebindable "Fix Orientation"

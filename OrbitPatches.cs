@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace OrbitAssist
+namespace Orbiter
 {
     [HarmonyPatch]
     public static class OrbitPatches
@@ -33,7 +33,7 @@ namespace OrbitAssist
         public static void ReadTranslationalInput_Postfix(
             ShipThrusterController __instance, ref Vector3 __result)
         {
-            var mod = OrbitAssistMod.Instance;
+            var mod = OrbiterMod.Instance;
             if (mod == null || !mod.IsOrbitActive) return;
 
             // Player touched the thrusters: hand control straight back.
@@ -94,7 +94,7 @@ namespace OrbitAssist
         public static void ReadRotationalInput_Postfix(
             ShipThrusterController __instance, ref Vector3 __result)
         {
-            var mod = OrbitAssistMod.Instance;
+            var mod = OrbiterMod.Instance;
             if (mod == null || !mod.IsOrientationLockActive) return;
 
             if (__result.sqrMagnitude > 0.01f)
@@ -147,7 +147,7 @@ namespace OrbitAssist
         [HarmonyPatch(typeof(ShipPromptController), nameof(ShipPromptController.Update))]
         public static void ShipPromptController_Update_Postfix()
         {
-            OrbitAssistMod.Instance?.UpdatePrompt();
+            OrbiterMod.Instance?.UpdatePrompt();
         }
 
         /// <summary>Landing cancels orbit hold.</summary>
@@ -155,7 +155,7 @@ namespace OrbitAssist
         // [HarmonyPatch(typeof(ShipBody), nameof(ShipBody.OnImpact))]
         // public static void ShipBody_OnImpact_Postfix()
         // {
-        //     OrbitAssistMod.Instance?.Disengage(DisengageReason.Landed);
+        //     OrbiterMod.Instance?.Disengage(DisengageReason.Landed);
         // }
     }
 }

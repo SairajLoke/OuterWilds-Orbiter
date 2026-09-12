@@ -1,7 +1,7 @@
-namespace OrbitAssist
+namespace Orbiter
 {
     /// <summary>
-    /// Wraps a single ScreenPrompt bound to the rebindable "Orbiter Mode" command,
+    /// Wraps a single ScreenPrompt bound to the rebindable "Orbiter" command,
     /// so it renders with the same boxed-key-icon styling as every other cockpit
     /// prompt (Match Velocity, Roll, Free Look, ...).
     ///
@@ -15,7 +15,7 @@ namespace OrbitAssist
         private bool _showingActive;
         private bool _registered;
 
-        private const string IdleText = "<CMD>   Orbiter Mode";
+        private const string IdleText = "<CMD>   Orbiter";
 
         public bool IsRegistered => _registered;
 
