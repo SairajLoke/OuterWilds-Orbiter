@@ -23,15 +23,19 @@
       "min": 0,
       "max": 0.5,
       "value": 0.15,
-      "tooltip": "Orbit assist cuts out below this much remaining fuel."
+      "tooltip": "Orbiter Mode cuts out below this much remaining fuel."
     },
     "engageDistanceThreshold": {
       "title": "Engage Distance Threshold (m)",
-      "type": "slider",
-      "min": 200,
-      "max": 10000,
+      "type": "number",
       "value": 3000,
-      "tooltip": "Orbit assist can only be engaged within this distance of the target body. Does not affect an already-engaged orbit."
+      "tooltip": "Orbiter Mode can only be engaged within this distance (in meters) of the target body. Does not affect an already-engaged orbit."
+    },
+    "showOrbitTrajectory": {
+      "title": "Show Orbit Trajectory Ring",
+      "type": "toggle",
+      "value": true,
+      "tooltip": "Faintly draws the circular orbit path being held around the target body."
     },
     "showDebugWindow": {
       "title": "Show Debug Overlay",
