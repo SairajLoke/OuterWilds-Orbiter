@@ -214,7 +214,12 @@ namespace Orbiter
             _targetOrbitSpeed = targetOrbitSpeed;
             _orbitNormal = orbitNormal;
 
-            TargetName = targetBody.name;
+            // GetHUDDisplayName() gives the same pretty "The Attlerock" style name
+            // the game's own HUD reticle uses; it's only populated for major bodies,
+            // so fall back to the raw GameObject name (e.g. "Moon_Body") for anything
+            // else (probes, minor asteroids, etc.) rather than showing a blank name.
+            string displayName = frame.GetHUDDisplayName();
+            TargetName = !string.IsNullOrEmpty(displayName) ? displayName : targetBody.name;
             LastVelError = Vector3.zero;
             LastDistance = dist0;
             LastOrbitSpeed = targetOrbitSpeed;
