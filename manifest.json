@@ -6,6 +6,6 @@
   "uniqueName": "SairajLoke.OrbitAssist",
   "description": "Press a key to circularise your ship's orbit around the targeted or nearest body. Any manual thrust cancels it.",
   "version": "0.1.0",
-  "owmlVersion": "2.15.1",
+  "owmlVersion": "2.16.3",
   "dependencies": []
 }

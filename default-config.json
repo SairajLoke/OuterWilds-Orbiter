@@ -25,6 +25,14 @@
       "value": 0.15,
       "tooltip": "Orbit assist cuts out below this much remaining fuel."
     },
+    "engageDistanceThreshold": {
+      "title": "Engage Distance Threshold (m)",
+      "type": "slider",
+      "min": 200,
+      "max": 10000,
+      "value": 3000,
+      "tooltip": "Orbit assist can only be engaged within this distance of the target body. Does not affect an already-engaged orbit."
+    },
     "showDebugWindow": {
       "title": "Show Debug Overlay",
       "type": "toggle",
