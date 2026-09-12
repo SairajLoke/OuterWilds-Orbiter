@@ -12,7 +12,6 @@ namespace Orbiter
     {
         PlayerToggle,
         ManualInput,
-        LeftCockpit,
         Autopilot,
         ThrustersUnusable,
         LowFuel,
@@ -38,10 +37,13 @@ namespace Orbiter
         private float _deadband = 0.5f;
         private float _engageDistanceThreshold = 3000f;
         private bool _showTrajectoryRing = true;
+        private float _orbitAxisRotationSpeed = 30f;
 
         // ── Input ────────────────────────────────────────────────────────
         private InputConsts.InputCommandType _toggleCommand;
         private InputConsts.InputCommandType _orientationToggleCommand;
+        private InputConsts.InputCommandType _rotateAxisRadialCommand;
+        private InputConsts.InputCommandType _rotateAxisTangentCommand;
 
         // ── Scene state ──────────────────────────────────────────────────
         private bool _inSolarSystem;
@@ -82,6 +84,24 @@ namespace Orbiter
                 Key.L,
                 GamepadBinding.DPadUp,
                 false);
+
+            _rotateAxisRadialCommand = ModHelper.RebindingHelper.RegisterRebindable(
+                "Rotate Orbit Axis (Radial)",
+                "Tilts the orbital plane, pivoting around the ship's current position.",
+                Key.RightBracket,
+                GamepadBinding.RightShoulder,
+                Key.LeftBracket,
+                GamepadBinding.LeftShoulder,
+                true);
+
+            _rotateAxisTangentCommand = ModHelper.RebindingHelper.RegisterRebindable(
+                "Rotate Orbit Axis (Tangent)",
+                "Tilts the orbital plane, pivoting around the ship's current direction of travel.",
+                Key.Quote,
+                GamepadBinding.RightTrigger,
+                Key.Semicolon,
+                GamepadBinding.LeftTrigger,
+                true);
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
 
@@ -135,6 +155,22 @@ namespace Orbiter
                 ModHelper.Console.WriteLine("[Orbiter] Ship body not found on scene load.", MessageType.Warning);
                 return;
             }
+
+            EnsureThrusterController();
+        }
+
+        /// <summary>
+        /// Standalone ThrusterController (same pattern as the base game's own
+        /// Autopilot) that actually injects thrust - independent of player seating,
+        /// unlike a Harmony postfix on ShipThrusterController (which stops firing
+        /// entirely once the player unbuckles). Idempotent and cheap; safe to call
+        /// every time _shipBody is (re)acquired.
+        /// </summary>
+        private void EnsureThrusterController()
+        {
+            if (_shipBody == null) return;
+            if (_shipBody.GetComponent<OrbiterThrusterController>() == null)
+                _shipBody.gameObject.AddComponent<OrbiterThrusterController>();
         }
 
         private void HardReset()
@@ -166,6 +202,7 @@ namespace Orbiter
             {
                 _shipBody = Locator.GetShipBody();
                 if (_shipBody == null) return;
+                EnsureThrusterController();
             }
 
             // Cheap no-op once registered; keeps retrying until PromptManager exists.
@@ -214,6 +251,23 @@ namespace Orbiter
             {
                 if (IsOrientationLockActive) DisengageOrientation(DisengageReason.PlayerToggle);
                 else TryEngageOrientation();
+            }
+
+            if (IsOrbitActive)
+            {
+                float radialAxisValue = 0f;
+                var radialCommand = InputLibrary.GetInputCommand(_rotateAxisRadialCommand);
+                if (radialCommand != null) radialAxisValue = OWInput.GetValue(radialCommand, InputMode.All);
+
+                float tangentAxisValue = 0f;
+                var tangentCommand = InputLibrary.GetInputCommand(_rotateAxisTangentCommand);
+                if (tangentCommand != null) tangentAxisValue = OWInput.GetValue(tangentCommand, InputMode.All);
+
+                if (Mathf.Abs(radialAxisValue) > 0.01f || Mathf.Abs(tangentAxisValue) > 0.01f)
+                {
+                    float step = _orbitAxisRotationSpeed * Time.deltaTime;
+                    Controller.RotateOrbitAxis(radialAxisValue * step, tangentAxisValue * step);
+                }
             }
         }
 
@@ -313,7 +367,6 @@ namespace Orbiter
             {
                 case DisengageReason.LowFuel: return "low fuel";
                 case DisengageReason.Autopilot: return "autopilot";
-                case DisengageReason.LeftCockpit: return "left cockpit";
                 case DisengageReason.ThrustersUnusable: return "thrusters offline";
                 case DisengageReason.Landed: return "landed";
                 case DisengageReason.TargetLost: return "target lost";
@@ -370,6 +423,7 @@ namespace Orbiter
             MinFuelFraction = config.GetSettingsValue<float>("minFuelFraction");
             _engageDistanceThreshold = config.GetSettingsValue<float>("engageDistanceThreshold");
             _showTrajectoryRing = config.GetSettingsValue<bool>("showOrbitTrajectory");
+            _orbitAxisRotationSpeed = config.GetSettingsValue<float>("orbitAxisRotationSpeed");
             _showDebugWindow = config.GetSettingsValue<bool>("showDebugWindow");
 
             // Configure() can fire before Start(), so Controller may not exist yet.

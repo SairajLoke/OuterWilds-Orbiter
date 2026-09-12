@@ -227,6 +227,46 @@ namespace Orbiter
             return true;
         }
 
+        /// <summary>
+        /// Rotates the held orbital plane, letting the player actively change its
+        /// orientation while orbiting. Two independent axes, so the full 2 degrees
+        /// of freedom a plane's orientation has (inclination + node) are directly
+        /// reachable without needing to wait for the ship to travel to a different
+        /// point in the orbit:
+        ///
+        ///  - radialDegrees: rotates around the ship's *current* radial direction
+        ///    (ship-to-target line). Keeps the ship's current position exactly on
+        ///    the new plane with zero discontinuity, since "up" stays perpendicular
+        ///    to the rotated normal by construction.
+        ///  - tangentDegrees: rotates around the current tangential (velocity)
+        ///    direction - independent of radialDegrees, always available regardless
+        ///    of orbital phase. This one does NOT keep the ship exactly on the new
+        ///    plane instantly; the existing radial-restoring term in ComputeInput
+        ///    absorbs the resulting small offset the same way it corrects any other
+        ///    perturbation, so it just reads as the orbit "catching up" briefly.
+        /// </summary>
+        public void RotateOrbitAxis(float radialDegrees, float tangentDegrees)
+        {
+            if (!HasTarget) return;
+
+            Vector3 r = _shipBody.GetWorldCenterOfMass() - _targetBody.GetWorldCenterOfMass();
+            float dist = r.magnitude;
+            if (dist < 1f) return;
+            Vector3 up = r / dist;
+
+            if (!Mathf.Approximately(radialDegrees, 0f))
+                _orbitNormal = Quaternion.AngleAxis(radialDegrees, up) * _orbitNormal;
+
+            if (!Mathf.Approximately(tangentDegrees, 0f))
+            {
+                Vector3 tangent = Vector3.Cross(_orbitNormal, up);
+                if (tangent.sqrMagnitude > 1e-6f)
+                    _orbitNormal = Quaternion.AngleAxis(tangentDegrees, tangent.normalized) * _orbitNormal;
+            }
+
+            _orbitNormal.Normalize();
+        }
+
         public void Clear()
         {
             _shipBody = null;
