@@ -1,7 +1,7 @@
 # Orbiter
 ![Orbiter](resources/thumbnail.png)
 
-Circularize and hold your ship's orbit around a planet or moon, hands off the stick.
+Orbit around a planet or moon automatically.
 
 ## Features
 - Press `O` to circularize and hold your current orbit
