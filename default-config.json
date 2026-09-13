@@ -28,7 +28,7 @@
     "engageDistanceThreshold": {
       "title": "Engage Distance Threshold (m)",
       "type": "number",
-      "value": 5000,
+      "value": 7000,
       "tooltip": "Orbiter Mode can only be engaged within this distance (in meters) of the target body. Does not affect an already-engaged orbit."
     },
     "showOrbitTrajectory": {
@@ -44,12 +44,6 @@
       "max": 90,
       "value": 30,
       "tooltip": "How fast holding the Rotate Orbit Axis keys tilts the orbital plane."
-    },
-    "showDebugWindow": {
-      "title": "Show Debug Overlay",
-      "type": "toggle",
-      "value": false,
-      "tooltip": "On-screen telemetry for tuning."
     }
   }
 }

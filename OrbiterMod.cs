@@ -32,7 +32,7 @@ namespace Orbiter
 
         // ── Config ───────────────────────────────────────────────────────
         public float MinFuelFraction { get; private set; } = 0.15f;
-        private bool _showDebugWindow;
+        // private bool _showDebugWindow; // see commented-out OnGUI() below
         private float _responseTime = 2.0f;
         private float _deadband = 0.5f;
         private float _engageDistanceThreshold = 3000f;
@@ -136,7 +136,7 @@ namespace Orbiter
 
             // Create these regardless of whether the ship body is found below -
             // Update() re-acquires _shipBody on its own retry loop, but these were
-            // only ever constructed here, so bailing out early before this point
+            // only constructed here, so bailing out early before this point
             // (as the ship-body check below does) meant they stayed null forever.
             // PromptManager isn't guaranteed to exist on the same frame as the load
             // either, and a single FireOnNextUpdate retry isn't guaranteed to catch
@@ -163,8 +163,8 @@ namespace Orbiter
         /// Standalone ThrusterController (same pattern as the base game's own
         /// Autopilot) that actually injects thrust - independent of player seating,
         /// unlike a Harmony postfix on ShipThrusterController (which stops firing
-        /// entirely once the player unbuckles). Idempotent and cheap; safe to call
-        /// every time _shipBody is (re)acquired.
+        /// entirely once the player unbuckles)....was initially done using ShipThrusterController
+        /// but was problemtatic given that the player can unbuckle and disable ShipThrusterController
         /// </summary>
         private void EnsureThrusterController()
         {
@@ -424,7 +424,8 @@ namespace Orbiter
             _engageDistanceThreshold = config.GetSettingsValue<float>("engageDistanceThreshold");
             _showTrajectoryRing = config.GetSettingsValue<bool>("showOrbitTrajectory");
             _orbitAxisRotationSpeed = config.GetSettingsValue<float>("orbitAxisRotationSpeed");
-            _showDebugWindow = config.GetSettingsValue<bool>("showDebugWindow");
+            // Debug overlay disabled for release - see OnGUI() below.
+            // _showDebugWindow = config.GetSettingsValue<bool>("showDebugWindow");
 
             // Configure() can fire before Start(), so Controller may not exist yet.
             if (Controller != null)
@@ -435,19 +436,21 @@ namespace Orbiter
         }
 
         // ─────────────────────────────────────────────────────────────────
-        // Optional debug overlay, off by default
+        // Debug overlay - disabled for release. Uncomment (and the
+        // _showDebugWindow field/Configure() line above, and the
+        // "showDebugWindow" entry in default-config.json) to bring back.
         // ─────────────────────────────────────────────────────────────────
 
-        private void OnGUI()
-        {
-            if (!_showDebugWindow || !_inSolarSystem || Controller == null) return;
-
-            GUI.Label(new Rect(10, 10, 600, 20), $"[Orbiter] active={IsOrbitActive}  target={Controller.TargetName}");
-            GUI.Label(new Rect(10, 30, 600, 20), $"dist={Controller.LastDistance:F0}m (hold={Controller.TargetRadius:F0}m)  orbitSpeed={Controller.LastOrbitSpeed:F1}m/s");
-            GUI.Label(new Rect(10, 50, 600, 20), $"velError={Controller.LastVelError.magnitude:F2}m/s  {Controller.LastVelError}");
-            GUI.Label(new Rect(10, 70, 600, 20), $"surfaceVel: radial={Controller.LastSurfaceRadialSpeed:F2}m/s (+away)  tangential={Controller.LastSurfaceTangentialSpeed:F2}m/s");
-            GUI.Label(new Rect(10, 90, 600, 20), $"cmd={Controller.LastCommand} mag={Controller.LastCommand.magnitude:F3}  maxAccel={Controller.LastMaxAccel:F2}m/s^2  limitRatio={Controller.LastThrustLimitRatio:F2}");
-            GUI.Label(new Rect(10, 110, 600, 20), $"orient: active={IsOrientationLockActive}  angleErr={OrientationController.LastAngleError:F1}deg  cmd={OrientationController.LastCommand} mag={OrientationController.LastCommand.magnitude:F3}");
-        }
+        // private void OnGUI()
+        // {
+        //     if (!_showDebugWindow || !_inSolarSystem || Controller == null) return;
+        //
+        //     GUI.Label(new Rect(10, 10, 600, 20), $"[Orbiter] active={IsOrbitActive}  target={Controller.TargetName}");
+        //     GUI.Label(new Rect(10, 30, 600, 20), $"dist={Controller.LastDistance:F0}m (hold={Controller.TargetRadius:F0}m)  orbitSpeed={Controller.LastOrbitSpeed:F1}m/s");
+        //     GUI.Label(new Rect(10, 50, 600, 20), $"velError={Controller.LastVelError.magnitude:F2}m/s  {Controller.LastVelError}");
+        //     GUI.Label(new Rect(10, 70, 600, 20), $"surfaceVel: radial={Controller.LastSurfaceRadialSpeed:F2}m/s (+away)  tangential={Controller.LastSurfaceTangentialSpeed:F2}m/s");
+        //     GUI.Label(new Rect(10, 90, 600, 20), $"cmd={Controller.LastCommand} mag={Controller.LastCommand.magnitude:F3}  maxAccel={Controller.LastMaxAccel:F2}m/s^2  limitRatio={Controller.LastThrustLimitRatio:F2}");
+        //     GUI.Label(new Rect(10, 110, 600, 20), $"orient: active={IsOrientationLockActive}  angleErr={OrientationController.LastAngleError:F1}deg  cmd={OrientationController.LastCommand} mag={OrientationController.LastCommand.magnitude:F3}");
+        // }
     }
 }
